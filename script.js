@@ -4,7 +4,7 @@ const output=document.querySelector(".output");
 window.start=function(player){
     const el=document.querySelector(".choice");
     el.style.visibility="visible";
-    document.querySelector(".startUp").style.visibility="hidden"
+    document.querySelector(".startUp").style.visibility="hidden";
     for (const i of cards){
     el.innerHTML+="<div class=\"card\"><img src=\"Resources/"+i[0]+"\"><br><p>"+i[1]+"</p></div>";
     }
