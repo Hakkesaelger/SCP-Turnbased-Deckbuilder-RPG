@@ -1,15 +1,16 @@
-const player={humes:10,hand:[]};
-const opponent={humes:10,hand:[]};
+const player={humes:10,hand:[],out:[]};
+const opponent={humes:10,hand:[],out:[]};
+const output=document.querySelector(".output");
 class Card{
-    constructor(card, player){
-        this.image=card.image
-        this.name=card.name
-        this.health=card.health;
-        this.mainAbility=card.mainAbility;
-        this.passiveAbility=card.passiveAbility;
-        this.specialAbility=card.specialAbility;
-        this.trigger=card.trigger
-        this.player=player;
+    constructor(image,name,health,mainAbility,passiveAbility,specialAbility,trigger,specialObj){
+        this.image=image
+        this.name=name
+        this.health=health;
+        this.mainAbility=mainAbility;
+        this.passiveAbility=passiveAbility;
+        this.specialAbility=specialAbility;
+        this.trigger=trigger;
+        this.specialObj=specialObj;
     }
     takeDamage(damage){
         this.health-=damage
@@ -18,7 +19,35 @@ class Card{
             this.player.hand.splice(index,1)
         }
     }
-    useMainAbility(target,used){this.mainAbility(target,used);}
-    checkPassive(){if (this.trigger&&this.passiveAbility){this.passiveAbility()}}
-    useSpecialAbility(target){if (this.specialAbility){this.specialAbility(target)};}
+    assignPlayer(player){this.player=player};
+    useMainAbility(target,used){this.mainAbility(target,used)};
+    checkPassive(){if (this.trigger&&this.passiveAbility){this.passiveAbility()}};
+    useSpecialAbility(target){if (this.specialAbility){this.specialAbility(target)}};
 }
+const cards=[new Card("OhNineSix.jpeg","SCP-096",100,function main(target, used){
+    if (used){
+        if (!(this.specialObj.mainHumeCost<=this.player.humes)){
+            output.innerHTML="Not enough humes";
+        }else{
+            this.player.humes-=this.specialObj.mainHumeCost
+            target.takeDamage(this.specialObj.damage);
+        }
+        }
+
+    }
+,function returnFromRage(){
+    if (0<this.specialObj.power && this.specialObj.power<4){
+        this.specialObj.power-=1;
+    } else if (this.specialObj.power===0){
+        this.specialObj.damage/=2
+        this.specialObj.power=4
+    }
+}
+,function special(target){
+    if (!(this.specialObj.specialHumeCost<=this.player.humes)){
+        output.innerHTML="Not enough humes";
+    }else{
+        this.specialObj.damage*=2
+        this.specialObj.power=3
+    }
+}, true, {mainHumeCost:1,specialHumeCost:4, damage:5,power:4})]
