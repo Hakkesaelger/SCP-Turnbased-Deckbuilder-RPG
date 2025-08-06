@@ -39,6 +39,7 @@ const cards=[new Card("OhNineSix.jpeg","SCP-096",100,function main(target, used)
             this.player.humes-=this.specialObj.mainHumeCost;
             target.takeDamage(this.specialObj.damage);
         }
+        }else{target.takeDamage(this.specialObj.damage);
         }
 
     }
