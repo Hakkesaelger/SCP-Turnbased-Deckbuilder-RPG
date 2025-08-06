@@ -1,0 +1,15 @@
+.choice{
+    display: flex;
+    align-items: center;
+    border: 2px dotted gray;
+    height:  250px;
+    width: 800px;
+    margin: 40px auto;
+    visibility: hidden;
+}
+.card{
+    border: 3px solid black;
+    height: 95%;
+    width:150px;
+    margin-left: 4px;
+}

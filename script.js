@@ -1,7 +1,12 @@
-import _ from "lodash";
-const player={humes:10,hand:[],out:[]};
-const opponent={humes:10,hand:[],out:[]};
+window.player={humes:10,hand:[],out:[]};
+window.opponent={humes:10,hand:[],out:[]};
 const output=document.querySelector(".output");
+window.start=function(player){
+    const el=document.querySelector(".choice");
+    el.style.visibility="visible";
+    document.querySelector(".startUp").style.visibility="hidden"
+    el.innerHTML+="<div class=\"card\"></div>";
+}
 class Card{
     constructor(image,name,health,mainAbility,passiveAbility,specialAbility,trigger,specialObj){
         this.image=image;
