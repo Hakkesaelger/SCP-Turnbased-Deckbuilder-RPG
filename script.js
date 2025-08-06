@@ -5,18 +5,21 @@ window.start=function(player){
     const el=document.querySelector(".choice");
     el.style.visibility="visible";
     document.querySelector(".startUp").style.visibility="hidden"
-    el.innerHTML+="<div class=\"card\"></div>";
+    for (const i of cards){
+    el.innerHTML+="<div class=\"card\"><img src=\"Resources/"+i[0]+"\"><br><p>"+i[1]+"</p></div>";
+    }
 }
 class Card{
-    constructor(image,name,health,mainAbility,passiveAbility,specialAbility,trigger,specialObj){
-        this.image=image;
-        this.name=name;
-        this.health=health;
-        this.mainAbility=mainAbility?.bind(this);
-        this.passiveAbility=passiveAbility?.bind(this);
-        this.specialAbility=specialAbility?.bind(this);
-        this.trigger=trigger;
-        this.specialObj=_.cloneDeep(specialObj);
+    constructor(info, player){
+        this.image=info[0];
+        this.name=info[1];
+        this.health=info[2];
+        this.mainAbility=info[3]?.bind(this);
+        this.passiveAbility=info[4]?.bind(this);
+        this.specialAbility=info[5]?.bind(this);
+        this.trigger=info[6]?.bind(this);
+        this.specialObj=_.cloneDeep(info[7]);
+        this.player=player;
     }
     takeDamage(damage){
         this.health-=damage;
@@ -31,12 +34,11 @@ class Card{
         }
         }
     }
-    assignPlayer(player){this.player=player};
     useMainAbility(target,used){this.mainAbility(target,used)};
     checkPassive(){if (this.trigger&&this.passiveAbility){this.passiveAbility()}};
     useSpecialAbility(target){if (this.specialAbility){this.specialAbility(target)}};
 }
-const cards=[new Card("OhNineSix.jpeg","SCP-096",100,function main(target, used){
+const cards=[["OhNineSix.jpeg","SCP-096",100,function main(target, used){
     if (used){
         if (!(this.specialObj.mainHumeCost<=this.player.humes)){
             output.innerHTML="Not enough humes";
@@ -49,9 +51,9 @@ const cards=[new Card("OhNineSix.jpeg","SCP-096",100,function main(target, used)
 
     }
 ,function returnFromRage(){
-    if (0<this.specialObj.power && this.specialObj.power<4){
+    if (0<this.specialObj.power){
         this.specialObj.power-=1;
-    } else if (this.specialObj.power===0){
+    } else{
         this.specialObj.damage/=2;
         this.specialObj.power=4;
     }
@@ -64,4 +66,4 @@ const cards=[new Card("OhNineSix.jpeg","SCP-096",100,function main(target, used)
     }else{this.specialObj.damage*=2;
         this.specialObj.power=3;
     }
-}, true, {mainHumeCost:1,specialHumeCost:4, damage:5,power:4})];
+}, function trigger(){return this.specialObj.power<4}, {mainHumeCost:1,specialHumeCost:4, damage:5,power:4}]];
