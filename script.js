@@ -1,3 +1,4 @@
+import _ from "lodash";
 const player={humes:10,hand:[],out:[]};
 const opponent={humes:10,hand:[],out:[]};
 const output=document.querySelector(".output");
@@ -6,17 +7,23 @@ class Card{
         this.image=image;
         this.name=name;
         this.health=health;
-        this.mainAbility=mainAbility;
-        this.passiveAbility=passiveAbility;
-        this.specialAbility=specialAbility;
+        this.mainAbility=mainAbility?.bind(this);
+        this.passiveAbility=passiveAbility?.bind(this);
+        this.specialAbility=specialAbility?.bind(this);
         this.trigger=trigger;
-        this.specialObj=specialObj;
+        this.specialObj=_.cloneDeep(specialObj);
     }
     takeDamage(damage){
         this.health-=damage;
         if (this.health<=0){
+            if (this.player.hand.includes(this)){
             const index=this.player.hand.indexOf(this);
             this.player.hand.splice(index,1);
+        }else{
+            const index=this.player.out.indexOf(this);
+            this.player.out.splice(index,1);
+
+        }
         }
     }
     assignPlayer(player){this.player=player};
