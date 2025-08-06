@@ -3,8 +3,8 @@ const opponent={humes:10,hand:[],out:[]};
 const output=document.querySelector(".output");
 class Card{
     constructor(image,name,health,mainAbility,passiveAbility,specialAbility,trigger,specialObj){
-        this.image=image
-        this.name=name
+        this.image=image;
+        this.name=name;
         this.health=health;
         this.mainAbility=mainAbility;
         this.passiveAbility=passiveAbility;
@@ -13,10 +13,10 @@ class Card{
         this.specialObj=specialObj;
     }
     takeDamage(damage){
-        this.health-=damage
+        this.health-=damage;
         if (this.health<=0){
             const index=this.player.hand.indexOf(this);
-            this.player.hand.splice(index,1)
+            this.player.hand.splice(index,1);
         }
     }
     assignPlayer(player){this.player=player};
@@ -29,7 +29,7 @@ const cards=[new Card("OhNineSix.jpeg","SCP-096",100,function main(target, used)
         if (!(this.specialObj.mainHumeCost<=this.player.humes)){
             output.innerHTML="Not enough humes";
         }else{
-            this.player.humes-=this.specialObj.mainHumeCost
+            this.player.humes-=this.specialObj.mainHumeCost;
             target.takeDamage(this.specialObj.damage);
         }
         }
@@ -39,15 +39,16 @@ const cards=[new Card("OhNineSix.jpeg","SCP-096",100,function main(target, used)
     if (0<this.specialObj.power && this.specialObj.power<4){
         this.specialObj.power-=1;
     } else if (this.specialObj.power===0){
-        this.specialObj.damage/=2
-        this.specialObj.power=4
+        this.specialObj.damage/=2;
+        this.specialObj.power=4;
     }
 }
 ,function special(target){
     if (!(this.specialObj.specialHumeCost<=this.player.humes)){
         output.innerHTML="Not enough humes";
-    }else{
-        this.specialObj.damage*=2
-        this.specialObj.power=3
+    }else if (this.specialObj.power===4){
+        output.innerHTML="Can't rage while raging";
+    }else{this.specialObj.damage*=2;
+        this.specialObj.power=3;
     }
-}, true, {mainHumeCost:1,specialHumeCost:4, damage:5,power:4})]
+}, true, {mainHumeCost:1,specialHumeCost:4, damage:5,power:4})];
