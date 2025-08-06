@@ -66,4 +66,10 @@ const cards=[["OhNineSix.jpeg","SCP-096",100,function main(target, used){
     }else{this.specialObj.damage*=2;
         this.specialObj.power=3;
     }
-}, function trigger(){return this.specialObj.power<4}, {mainHumeCost:1,specialHumeCost:4, damage:5,power:4}]];
+}, function trigger(){return this.specialObj.power<4}, {mainHumeCost:1,specialHumeCost:4, damage:5,power:4}],
+["OneSevenThree.jpeg","SCP-173",80,function main(target){
+        target.takeDamage(this.specialObj.damage)
+        document.querySelector("button.main.173").disabled=true
+    }, function cantAttack(){document.querySelector("button.main.173").disabled=true},undefined,
+    function trigger(){document.querySelector("button.main.173").disabled=false;
+return Math.random()<0.2},{damage:30}]];
