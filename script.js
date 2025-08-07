@@ -1,17 +1,26 @@
 window.player={humes:10,hand:[],out:[]};
 window.opponent={humes:10,hand:[],out:[]};
-const output=document.querySelector(".output");
-window.start=function(player){
+window.start=function(){
     const el=document.querySelector(".choice");
     el.style.visibility="visible";
     document.getElementById("startUp").style.visibility="hidden";
     el.innerHTML="";
-    for (const i of cards){
-    el.innerHTML+="<div class=\"card\"><img src=\"Resources/"+i[0]+"\"><br><p>"+i[1]+"</p></div>";
+        function eventStuff(){
+        window.player.hand.push(new Card(cards[Number(this.dataset.card)],window.player,this))
+        el.removeChild(this)
+        document.querySelector(".hand#player").appendChild(this);
+        this.removeEventListener("click", eventStuff)}
+    for (let i=0; i<cards.length; i++){
+    const card=document.createElement("div");
+    card.classList.add("card");
+    card.dataset.card=i;
+    card.innerHTML="<img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
+    card.addEventListener("click", eventStuff);
+    el.appendChild(card)
     }
 }
 class Card{
-    constructor(info, player){
+    constructor(info, player, domElement){
         this.image=info[0];
         this.name=info[1];
         this.health=info[2];
@@ -22,6 +31,7 @@ class Card{
         this.specialObj=_.cloneDeep(info[7]);
         this.buffsAndDebuffs=[];
         this.player=player;
+        this.domElement=domElement
     }
     takeDamage(damage){
         this.health-=damage;
