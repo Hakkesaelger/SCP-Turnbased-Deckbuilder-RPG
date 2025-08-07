@@ -19,6 +19,7 @@ class Card{
         this.specialAbility=info[5]?.bind(this);
         this.trigger=info[6]?.bind(this);
         this.specialObj=_.cloneDeep(info[7]);
+        this.buffsAndDebuffs=[];
         this.player=player;
     }
     takeDamage(damage){
@@ -34,42 +35,60 @@ class Card{
         }
         }
     }
-    useMainAbility(target,used){this.mainAbility(target,used)};
-    checkPassive(){if (this.trigger&&this.passiveAbility){this.passiveAbility()}};
+    useMainAbility(target){this.mainAbility(target)};
+    checkPassive(){if (this.trigger()&&this.passiveAbility){this.passiveAbility()}};
     useSpecialAbility(target){if (this.specialAbility){this.specialAbility(target)}};
-}
-const cards=[["OhNineSix.jpeg","SCP-096",100,function main(target, used){
-    if (used){
-        if (!(this.specialObj.mainHumeCost<=this.player.humes)){
-            output.innerHTML="Not enough humes";
+    onceUsed(isSpecial){
+        if (isSpecial){
+            this.player.humes-=this.specialObj.specialHumeCost;
+            this.specialObj.cooldown=this.specialObj.maxCooldown;
+            this.setButton("button.specialAbility."+this.name,true);
         }else{
-            this.player.humes-=this.specialObj.mainHumeCost;
-            target.takeDamage(this.specialObj.damage);
+            if (this.specialObj.used===true){
+                this.player.humes-=this.specialObj.mainHumeCost;
+            }
+            if (this.player.humes<this.specialObj.mainHumeCost){
+                this.setButton("button.mainAbility."+this.name,true);
+            }
+            this.specialObj.used=true;
         }
-        }else{target.takeDamage(this.specialObj.damage);
         }
-
+    newTurn(){
+        if (this.specialObj.cooldown>0){this.specialObj.cooldown-=1};
+        if (this.mainAbility){this.setButton("button.mainAbility."+this.name,false);
+        if (this.specialAbility){
+            if (this.specialObj.specialHumeCost<=this.player.humes && this.specialObj.cooldown===0){
+                this.setButton("button.specialAbility."+this.name,true)
+            }
+            }
+        }
+    this.checkPassive();
+    this.checkBuffsAndDebuffs();
     }
-,function returnFromRage(){
-    if (0<this.specialObj.power){
-        this.specialObj.power-=1;
-    } else{
-        this.specialObj.damage/=2;
-        this.specialObj.power=4;
+    checkBuffsAndDebuffs(){
+        for (let i = this.buffsAndDebuffs.length - 1; i >= 0; i--){
+            if (this.buffsAndDebuffs[i][0]!==0){
+                this.buffsAndDebuffs[i][0]-=1;
+            }else{
+                this.buffsAndDebuffs[i][1]();
+                this.buffsAndDebuffs.splice(i,1);
+            }
+        }
     }
+    setButton(button,set){document.querySelector(button).disabled=set}
 }
-,function special(target){
-    if (!(this.specialObj.specialHumeCost<=this.player.humes)){
-        output.innerHTML="Not enough humes";
-    }else if (this.specialObj.power===4){
-        output.innerHTML="Can't rage while raging";
-    }else{this.specialObj.damage*=2;
-        this.specialObj.power=3;
-    }
-}, function trigger(){return this.specialObj.power<4}, {mainHumeCost:1,specialHumeCost:4, damage:5,power:4}],
+const cards=[["OhNineSix.jpeg","SCP-096",100,function main(target){
+        target.takeDamage(this.specialObj.damage);
+        this.onceUsed(false);
+}
+,undefined
+,function special(...args){
+    this.specialObj.damage*=2;
+        this.buffsAndDebuffs=[3,()=>this.specialObj.damage/=2];
+    this.onceUsed(true);
+}, undefined, {mainHumeCost:1,specialHumeCost:4, damage:5,cooldown:0,maxCooldown:5,used:false}],
 ["OneSevenThree.jpeg","SCP-173",80,function main(target){
-        target.takeDamage(this.specialObj.damage)
-        document.querySelector("button.main.173").disabled=true
-    }, function cantAttack(){document.querySelector("button.main.173").disabled=true},undefined,
-    function trigger(){document.querySelector("button.main.173").disabled=false;
-return Math.random()<0.2},{damage:30}]];
+        target.takeDamage(this.specialObj.damage);
+        this.onceUsed(false);
+    }, function blink(){this.setButton("button.mainAbility.SCP-173",true)},undefined,
+    function trigger(){return Math.random()<0.2},{damage:30,used:false,mainHumeCost:5}]];
