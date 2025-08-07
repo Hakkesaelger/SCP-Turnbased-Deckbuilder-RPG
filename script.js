@@ -53,23 +53,23 @@ class Card{
         if (isSpecial){
             this.player.humes-=this.specialObj.specialHumeCost;
             this.specialObj.cooldown=this.specialObj.maxCooldown;
-            this.setButton("button.specialAbility."+this.name,true);
+            this.setButton("button.specialAbility");
         }else{
             if (this.specialObj.used===true){
                 this.player.humes-=this.specialObj.mainHumeCost;
             }
             if (this.player.humes<this.specialObj.mainHumeCost){
-                this.setButton("button.mainAbility."+this.name,true);
+                this.setButton("button.mainAbility");
             }
             this.specialObj.used=true;
         }
         }
     newTurn(){
         if (this.specialObj.cooldown>0){this.specialObj.cooldown-=1};
-        if (this.mainAbility){this.setButton("button.mainAbility."+this.name,false);
+        if (this.mainAbility){this.setButton("button.mainAbility"+this.name,false);
         if (this.specialAbility){
             if (this.specialObj.specialHumeCost<=this.player.humes && this.specialObj.cooldown===0){
-                this.setButton("button.specialAbility."+this.name,true)
+                this.setButton("button.specialAbility")
             }
             }
         }
@@ -86,7 +86,7 @@ class Card{
             }
         }
     }
-    setButton(button,set){document.querySelector(button).disabled=set}
+    setButton(button,set){this.domElement.querySelector(button).disabled=set}
 }
 const cards=[["OhNineSix.jpeg","SCP-096",100,function main(target){
         target.takeDamage(this.specialObj.damage);
@@ -101,5 +101,5 @@ const cards=[["OhNineSix.jpeg","SCP-096",100,function main(target){
 ["OneSevenThree.jpeg","SCP-173",80,function main(target){
         target.takeDamage(this.specialObj.damage);
         this.onceUsed(false);
-    }, function blink(){this.setButton("button.mainAbility.SCP-173",true)},undefined,
+    }, function blink(){this.setButton("button.mainAbility",true)},undefined,
     function trigger(){return Math.random()<0.2},{damage:30,used:false,mainHumeCost:5}]];
