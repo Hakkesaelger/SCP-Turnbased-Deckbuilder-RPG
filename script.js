@@ -14,7 +14,7 @@ window.start=function(){
     const card=document.createElement("div");
     card.classList.add("card");
     card.dataset.card=i;
-    card.innerHTML="<img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
+    card.innerHTML="<p class=\"hp\">"+cards[i][2]+"hp</p><img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
     card.addEventListener("click", eventStuff);
     el.appendChild(card);
     const info=document.createElement("div");
@@ -36,6 +36,7 @@ class Card{
         this.player=player;
         this.domElement=domElement;
         this.info=this.domElement.querySelector(".info");
+        this.flavortexts=info[8];
         
     }
     takeDamage(damage){
@@ -108,7 +109,8 @@ const cards=[
         this.onceUsed(true);
     }, 
     undefined, 
-        {mainHumeCost:1,specialHumeCost:4, damage:5,cooldown:0,maxCooldown:5,used:false}
+    {mainHumeCost:1,specialHumeCost:4, damage:5,cooldown:0,maxCooldown:5,used:false},
+    {}
     ],
     ["OneSevenThree.jpeg",
     "SCP-173",
@@ -119,6 +121,7 @@ const cards=[
          function blink(){this.setButton("button.mainAbility",true)},
          undefined,
         function trigger(){return Math.random()<0.2},
-        {damage:30,used:false,mainHumeCost:5}
+        {damage:30,used:false,mainHumeCost:5},
+        {}
     ]
 ]
