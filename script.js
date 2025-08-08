@@ -16,7 +16,10 @@ window.start=function(){
     card.dataset.card=i;
     card.innerHTML="<img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
     card.addEventListener("click", eventStuff);
-    el.appendChild(card)
+    el.appendChild(card);
+    const info=document.createElement("div");
+    info.classList.add("info");
+    card.insertBefore(info, card.lastElementChild);
     }
 }
 class Card{
@@ -29,9 +32,11 @@ class Card{
         this.specialAbility=info[5]?.bind(this);
         this.trigger=info[6]?.bind(this);
         this.specialObj=_.cloneDeep(info[7]);
-        this.buffsAndDebuffs=[];
+        this.buffsAndDebuffs={};
         this.player=player;
-        this.domElement=domElement
+        this.domElement=domElement;
+        this.info=this.domElement.querySelector(".info");
+        
     }
     takeDamage(damage){
         this.health-=damage;
@@ -77,29 +82,43 @@ class Card{
     this.checkBuffsAndDebuffs();
     }
     checkBuffsAndDebuffs(){
-        for (let i = this.buffsAndDebuffs.length - 1; i >= 0; i--){
-            if (this.buffsAndDebuffs[i][0]!==0){
-                this.buffsAndDebuffs[i][0]-=1;
+        for (const [key, i] of Object.entries(this.buffsAndDebuffs)){
+            if (i[0]!==0){
+                i[0]-=1;
             }else{
-                this.buffsAndDebuffs[i][1]();
-                this.buffsAndDebuffs.splice(i,1);
+                i[1]();
+                delete this.buffsAndDebuffs[key];
             }
         }
     }
     setButton(button,set){this.domElement.querySelector(button).disabled=set}
 }
-const cards=[["OhNineSix.jpeg","SCP-096",100,function main(target){
+const cards=[
+    ["OhNineSix.jpeg",
+    "SCP-096",
+    100,
+    function main(target){
         target.takeDamage(this.specialObj.damage);
-        this.onceUsed(false);
-}
-,undefined
-,function special(...args){
-    this.specialObj.damage*=2;
-        this.buffsAndDebuffs=[3,()=>this.specialObj.damage/=2];
-    this.onceUsed(true);
-}, undefined, {mainHumeCost:1,specialHumeCost:4, damage:5,cooldown:0,maxCooldown:5,used:false}],
-["OneSevenThree.jpeg","SCP-173",80,function main(target){
+        this.onceUsed(false)
+    },
+    undefined,
+    function special(...args){
+        this.specialObj.damage*=2;
+        this.buffsAndDebuffs.rage=[3,()=>this.specialObj.damage/=2];
+        this.onceUsed(true);
+    }, 
+    undefined, 
+        {mainHumeCost:1,specialHumeCost:4, damage:5,cooldown:0,maxCooldown:5,used:false}
+    ],
+    ["OneSevenThree.jpeg",
+    "SCP-173",
+    80,
+    function main(target){
         target.takeDamage(this.specialObj.damage);
-        this.onceUsed(false);
-    }, function blink(){this.setButton("button.mainAbility",true)},undefined,
-    function trigger(){return Math.random()<0.2},{damage:30,used:false,mainHumeCost:5}]];
+        this.onceUsed(false);},
+         function blink(){this.setButton("button.mainAbility",true)},
+         undefined,
+        function trigger(){return Math.random()<0.2},
+        {damage:30,used:false,mainHumeCost:5}
+    ]
+]

@@ -2,8 +2,8 @@
     display: flex;
     align-items: center;
     border: 2px dotted gray;
-    height:  250px;
-    width: 800px;
+    height:  300px;
+    width: 900px;
     margin: 40px auto;
     visibility: hidden;
 }
@@ -16,7 +16,7 @@
     background-color: white;
 }
 img{
-    height: 80%;
+    height: 40%;
     border: 1px solid black;
     margin-top: 3px;
 }
@@ -30,4 +30,9 @@ img{
     height:  250px;
     width: 800px;
     margin: 40px auto;
+}
+.info{
+    border: 2px solid black;
+    width: 95%;
+    height: 33%;
 }
