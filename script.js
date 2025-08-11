@@ -1,5 +1,5 @@
-window.player={humes:10,hand:[],out:[]};
-window.opponent={humes:10,hand:[],out:[]};
+player={humes:10,hand:[],out:[]};
+opponent={humes:10,hand:[],out:[]};
 window.start=function(){
     const el=document.querySelector(".choice");
     el.style.visibility="visible";
