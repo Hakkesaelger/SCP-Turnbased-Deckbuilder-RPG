@@ -1,25 +1,46 @@
-player={humes:10,hand:[],out:[]};
-opponent={humes:10,hand:[],out:[]};
+player={humes:10,hand:[],out:[], visibleHand:document.querySelector(".hand#player")};
+opponent={humes:10,hand:[],out:[], visibleHand:document.querySelector(".hand#opponent")};
 window.start=function(){
     const el=document.querySelector(".choice");
     el.style.visibility="visible";
     document.getElementById("startUp").style.visibility="hidden";
     el.innerHTML="";
         function eventStuff(){
-        window.player.hand.push(new Card(cards[Number(this.dataset.card)],window.player,this))
-        el.removeChild(this)
+        window.player.hand.push(this.classCard);
+        el.removeChild(this);
         document.querySelector(".hand#player").appendChild(this);
-        this.removeEventListener("click", eventStuff)}
+        this.removeEventListener("click", eventStuff);
+        const buttons=this.querySelectorAll("button")
+        for (const i of buttons){
+            i.disabled=false;
+        }}
     for (let i=0; i<cards.length; i++){
     const card=document.createElement("div");
     card.classList.add("card");
     card.dataset.card=i;
+    card.classCard=new Card(cards[Number(card.dataset.card)],player,card);
     card.innerHTML="<p class=\"hp\">"+cards[i][2]+"hp</p><img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
     card.addEventListener("click", eventStuff);
     el.appendChild(card);
     const info=document.createElement("div");
     info.classList.add("info");
     card.insertBefore(info, card.lastElementChild);
+    if (cards[i][3]){
+        const main=document.createElement("button");
+        main.innerHTML="Use main ability on self"
+        main.classList.add("mainAbility");
+        main.disabled=true;
+        main.addEventListener("click",()=>card.classCard.useMainAbility(card.classCard));
+        info.appendChild(main);
+    }
+    if (cards[i][5]){
+        const special=document.createElement("button");
+        special.innerHTML="Use special ability"
+        special.classList.add("specialAbility");
+        special.disabled=true;
+        special.addEventListener("click",()=>card.classCard.useSpecialAbility());
+        info.appendChild(special);
+    }
     }
 }
 class Card{
@@ -41,10 +62,13 @@ class Card{
     }
     takeDamage(damage){
         this.health-=damage;
+        this.domElement.querySelector(".hp").innerHTML=this.health+"hp";
         if (this.health<=0){
+            this.player.visibleHand.removeChild(this.domElement);
             if (this.player.hand.includes(this)){
             const index=this.player.hand.indexOf(this);
             this.player.hand.splice(index,1);
+
         }else{
             const index=this.player.out.indexOf(this);
             this.player.out.splice(index,1);
@@ -54,7 +78,7 @@ class Card{
     }
     useMainAbility(target){this.mainAbility(target)};
     checkPassive(){if (this.trigger()&&this.passiveAbility){this.passiveAbility()}};
-    useSpecialAbility(target){if (this.specialAbility){this.specialAbility(target)}};
+    useSpecialAbility(target){this.specialAbility(target)};
     onceUsed(isSpecial){
         if (isSpecial){
             this.player.humes-=this.specialObj.specialHumeCost;
