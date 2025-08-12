@@ -1,11 +1,35 @@
 player={humes:10,hand:[],out:[], visibleHand:document.querySelector(".hand#player")};
 opponent={humes:10,hand:[],out:[], visibleHand:document.querySelector(".hand#opponent")};
+function initOpponent(i){
+    const el=document.getElementById("opponent")
+    const card=document.createElement("div");
+    card.classList.add("card");
+    card.classCard=new Card(cards[i],opponent,card);
+    card.innerHTML="<p class=\"hp\">"+cards[i][2]+"hp</p><img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
+    el.appendChild(card);
+        const info=document.createElement("div");
+    info.classList.add("info");
+    card.insertBefore(info, card.lastElementChild);
+    if (cards[i][3]){
+        const main=document.createElement("p");
+        main.innerHTML="Use main ability on self"
+        main.classList.add("opponentAbility");
+        info.appendChild(main);
+    }
+    if (cards[i][5]){
+        const special=document.createElement("p");
+        special.innerHTML="Use special ability"
+        special.classList.add("opponentAbility");
+        info.appendChild(special);
+    }
+}
 window.start=function(){
+    initOpponent(1);
     const el=document.querySelector(".choice");
     el.style.visibility="visible";
     document.getElementById("startUp").style.visibility="hidden";
     el.innerHTML="";
-        function eventStuff(){
+    function eventStuff(){
         window.player.hand.push(this.classCard);
         el.removeChild(this);
         document.querySelector(".hand#player").appendChild(this);
@@ -17,8 +41,8 @@ window.start=function(){
     for (let i=0; i<cards.length; i++){
     const card=document.createElement("div");
     card.classList.add("card");
-    card.dataset.card=i;
-    card.classCard=new Card(cards[Number(card.dataset.card)],player,card);
+    card.card=i;
+    card.classCard=new Card(cards[card.card],player,card);
     card.innerHTML="<p class=\"hp\">"+cards[i][2]+"hp</p><img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
     card.addEventListener("click", eventStuff);
     el.appendChild(card);
@@ -84,6 +108,14 @@ class Card{
             this.player.humes-=this.specialObj.specialHumeCost;
             this.specialObj.cooldown=this.specialObj.maxCooldown;
             this.setButton("button.specialAbility",true);
+        if(this.mainAbility){
+                        if (this.specialObj.used===true){
+                this.player.humes-=this.specialObj.mainHumeCost;
+            }
+            if (this.player.humes<this.specialObj.mainHumeCost&&this.specialObj.used){
+                this.setButton("button.mainAbility",true);
+            }
+        }
         }else{
             if (this.specialObj.used===true){
                 this.player.humes-=this.specialObj.mainHumeCost;
@@ -92,6 +124,9 @@ class Card{
                 this.setButton("button.mainAbility",true);
             }
             this.specialObj.used=true;
+            if(this.player.humes<this.specialObj.specialHumeCost){
+                this.setButton("button.specialAbility",true);
+            }
         }
         }
     newTurn(){

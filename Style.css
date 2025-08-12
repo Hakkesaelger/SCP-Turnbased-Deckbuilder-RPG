@@ -42,3 +42,11 @@ img{
     margin-bottom: 3px;
     margin-top: 0;
 }
+.opponentAbility{
+    display: inline-block;
+    font-size: 11px;
+    border: 1px solid black;
+    border-radius: 10%;
+    width: 70%;
+    font-family: "Times New Roman";
+}
