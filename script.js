@@ -83,26 +83,25 @@ class Card{
         if (isSpecial){
             this.player.humes-=this.specialObj.specialHumeCost;
             this.specialObj.cooldown=this.specialObj.maxCooldown;
-            this.setButton("button.specialAbility");
+            this.setButton("button.specialAbility",true);
         }else{
             if (this.specialObj.used===true){
                 this.player.humes-=this.specialObj.mainHumeCost;
             }
             if (this.player.humes<this.specialObj.mainHumeCost){
-                this.setButton("button.mainAbility");
+                this.setButton("button.mainAbility",true);
             }
             this.specialObj.used=true;
         }
         }
     newTurn(){
-        if (this.specialObj.cooldown>0){this.specialObj.cooldown-=1};
-        if (this.mainAbility){this.setButton("button.mainAbility"+this.name,false);
+        if (this.mainAbility){this.setButton("button.mainAbility",false)};
         if (this.specialAbility){
             if (this.specialObj.specialHumeCost<=this.player.humes && this.specialObj.cooldown===0){
-                this.setButton("button.specialAbility")
+                this.setButton("button.specialAbility",false)
             }
+        if (this.specialObj.cooldown>0){this.specialObj.cooldown-=1};
             }
-        }
     this.checkPassive();
     this.checkBuffsAndDebuffs();
     }
