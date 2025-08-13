@@ -1,5 +1,5 @@
-player={humes:10,hand:[],out:[], visibleHand:document.querySelector(".hand#player")};
-opponent={humes:10,hand:[],out:[], visibleHand:document.querySelector(".hand#opponent")};
+player={humes:10,hand:[], visibleHand:document.querySelector(".hand#player")};
+opponent={humes:10,hand:[], visibleHand:document.querySelector(".hand#opponent")};
 function initOpponent(i){
     const el=document.getElementById("opponent")
     const card=document.createElement("div");
@@ -89,15 +89,8 @@ class Card{
         this.domElement.querySelector(".hp").innerHTML=this.health+"hp";
         if (this.health<=0){
             this.player.visibleHand.removeChild(this.domElement);
-            if (this.player.hand.includes(this)){
             const index=this.player.hand.indexOf(this);
             this.player.hand.splice(index,1);
-
-        }else{
-            const index=this.player.out.indexOf(this);
-            this.player.out.splice(index,1);
-
-        }
         }
     }
     useMainAbility(target){this.mainAbility(target)};
@@ -106,28 +99,11 @@ class Card{
     onceUsed(isSpecial){
         if (isSpecial){
             this.player.humes-=this.specialObj.specialHumeCost;
-            this.specialObj.cooldown=this.specialObj.maxCooldown;
-            this.setButton("button.specialAbility",true);
-        if(this.mainAbility){
-                        if (this.specialObj.used===true){
-                this.player.humes-=this.specialObj.mainHumeCost;
-            }
-            if (this.player.humes<this.specialObj.mainHumeCost&&this.specialObj.used){
-                this.setButton("button.mainAbility",true);
-            }
-        }
         }else{
-            if (this.specialObj.used===true){
-                this.player.humes-=this.specialObj.mainHumeCost;
-            }
-            if (this.player.humes<this.specialObj.mainHumeCost){
-                this.setButton("button.mainAbility",true);
-            }
+            if (this.specialObj.used){this.player.humes-=this.specialObj.mainHumeCost};
             this.specialObj.used=true;
-            if(this.player.humes<this.specialObj.specialHumeCost){
-                this.setButton("button.specialAbility",true);
-            }
         }
+        //add some shit here, maybe a for loop
         }
     newTurn(){
         if (this.mainAbility){this.setButton("button.mainAbility",false)};
