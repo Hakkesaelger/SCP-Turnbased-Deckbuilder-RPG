@@ -1,25 +1,29 @@
 player={humes:10,hand:[], visibleHand:document.querySelector(".hand#player")};
 opponent={humes:10,hand:[], visibleHand:document.querySelector(".hand#opponent")};
+const blueCard=document.createElement("div");
+blueCard.classList.add("card");
+blueCard.innerHTML="<p class=\"hp\">hp</p><img><br><p></p>";
+const blueInfo=document.createElement("div");
+blueInfo.classList.add("info");
+blueCard.insertBefore(blueInfo, blueCard.lastChild);
+
 function initOpponent(i){
-    const el=document.getElementById("opponent")
-    const card=document.createElement("div");
-    card.classList.add("card");
+    const card=blueCard.cloneNode(true);
+    const info=card.querySelector(".info")
+    card.lastChild.innerHTML=cards[i][1]
+    const el=document.getElementById("opponent");
+    card.firstChild.innerHTML=cards[i][2]+"hp";
+    card.querySelector("img").src=cards[i][0];
     card.classCard=new Card(cards[i],opponent,card);
-    card.innerHTML="<p class=\"hp\">"+cards[i][2]+"hp</p><img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
     el.appendChild(card);
-        const info=document.createElement("div");
-    info.classList.add("info");
-    card.insertBefore(info, card.lastElementChild);
     if (cards[i][3]){
-        const main=document.createElement("p");
+        const main=document.createElement("button");
         main.innerHTML="Use main ability on self"
-        main.classList.add("opponentAbility");
         info.appendChild(main);
     }
     if (cards[i][5]){
-        const special=document.createElement("p");
+        const special=document.createElement("button");
         special.innerHTML="Use special ability"
-        special.classList.add("opponentAbility");
         info.appendChild(special);
     }
 }
@@ -39,16 +43,13 @@ window.start=function(){
             i.disabled=false;
         }}
     for (let i=0; i<cards.length; i++){
-    const card=document.createElement("div");
-    card.classList.add("card");
-    card.card=i;
-    card.classCard=new Card(cards[card.card],player,card);
-    card.innerHTML="<p class=\"hp\">"+cards[i][2]+"hp</p><img src=\"Resources/"+cards[i][0]+"\"><br><p>"+cards[i][1]+"</p>";
+    const card=blueCard.cloneNode(true)
+    const info=card.querySelector(".info")
+    card.classCard=new Card(cards[i],player,card);
     card.addEventListener("click", eventStuff);
+    card.querySelector("img").src=cards[i][0];
+    card.firstChild.innerHTML=cards[i][2]+"hp";
     el.appendChild(card);
-    const info=document.createElement("div");
-    info.classList.add("info");
-    card.insertBefore(info, card.lastElementChild);
     if (cards[i][3]){
         const main=document.createElement("button");
         main.innerHTML="Use main ability on self"
@@ -99,12 +100,20 @@ class Card{
     onceUsed(isSpecial){
         if (isSpecial){
             this.player.humes-=this.specialObj.specialHumeCost;
+            this.specialObj.cooldown=this.specialObj.maxCooldown
+            this.setButton(".specialAbility",true)
         }else{
             if (this.specialObj.used){this.player.humes-=this.specialObj.mainHumeCost};
             this.specialObj.used=true;
         }
-        //add some shit here, maybe a for loop
+        for (let i of this.player.hand){
+            if (i.player.humes<i.specialObj.mainHumeCost&&i.specialObj.used){
+                i.setButton(".mainAbility",true);
+            }if(i.player.humes<i.specialObj.specialHumeCost){
+            i.setButton(".specialAbility", true);
+            }
         }
+    }
     newTurn(){
         if (this.mainAbility){this.setButton("button.mainAbility",false)};
         if (this.specialAbility){
@@ -129,7 +138,7 @@ class Card{
     setButton(button,set){this.domElement.querySelector(button).disabled=set}
 }
 const cards=[
-    ["OhNineSix.jpeg",
+    ["Resources/OhNineSix.jpeg",
     "SCP-096",
     100,
     function main(target){
@@ -146,7 +155,7 @@ const cards=[
     {mainHumeCost:1,specialHumeCost:4, damage:5,cooldown:0,maxCooldown:5,used:false},
     {}
     ],
-    ["OneSevenThree.jpeg",
+    ["Resources/OneSevenThree.jpeg",
     "SCP-173",
     80,
     function main(target){
